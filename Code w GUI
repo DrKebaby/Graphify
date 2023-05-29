@@ -1,1 +1,206 @@
+import matplotlib.pyplot as plt
+import numpy as np
 
+def create_bar_graph(labels, values, x_label, y_label, graph_title, color='blue'):
+    plt.bar(labels, values, color=color)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(graph_title)
+    plt.show()
+
+def create_scatter_plot(x_values, y_values, x_label, y_label, graph_title, color='blue', trendline=False):
+    plt.scatter(x_values, y_values, color=color)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(graph_title)
+    if trendline:
+        z = np.polyfit(x_values, y_values, 1)
+        p = np.poly1d(z)
+        plt.plot(x_values, p(x_values), color='red', linestyle='--')
+    plt.show()
+
+def create_pie_chart(values, custom_labels=None, graph_title="Pie Chart", colors=None):
+    labels = custom_labels or [f"Slice {i+1}" for i in range(len(values))]
+    colors = colors or plt.cm.Set3.colors[:len(values)]
+    plt.pie(values, labels=labels, colors=colors, autopct='%1.1f%%')
+    plt.title(graph_title)
+    plt.show()
+
+def main():
+    while True:
+        # Ask the user what graph they want to create
+        print("Select a graph type:")
+        print("1. Bar Graph")
+        print("2. Scatter Plot")
+        print("3. Pie Chart")
+        choice = input("Enter your choice (1, 2, or 3): ")
+
+        if choice == '1':
+            custom_labels = input("Enter custom labels (comma-separated values): ").split(',')
+            values = []
+
+            for label in custom_labels:
+                value = float(input(f"Enter y value for {label}: "))
+                values.append(value)
+
+            while True:
+                color_option = input("Do you want to specify a color for bars? (y/n): ")
+                if color_option.lower() == 'y':
+                    color = input("Enter color for bars (optional, default is blue): ")
+                    break
+                elif color_option.lower() == 'n':
+                    color = 'blue'
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                title_option = input("Do you want to specify a title for the graph? (y/n): ")
+                if title_option.lower() == 'y':
+                    graph_title = input("Enter graph title: ")
+                    break
+                elif title_option.lower() == 'n':
+                    graph_title = "Bar Graph"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                x_label_option = input("Do you want to specify an x-axis label? (y/n): ")
+                if x_label_option.lower() == 'y':
+                    x_label = input("Enter x-axis label: ")
+                    break
+                elif x_label_option.lower() == 'n':
+                    x_label = "X-axis"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                y_label_option = input("Do you want to specify a y-axis label? (y/n): ")
+                if y_label_option.lower() == 'y':
+                    y_label = input("Enter y-axis label: ")
+                    break
+                elif y_label_option.lower() == 'n':
+                    y_label = "Y-axis"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            create_bar_graph(custom_labels, values, x_label, y_label, graph_title, color)
+
+        elif choice == '2':
+            x_values = list(map(float, input("Enter x values (comma-separated): ").split(',')))
+            y_values = list(map(float, input("Enter y values (comma-separated): ").split(',')))
+
+            while True:
+                color_option = input("Do you want to specify a color for the scatter plot? (y/n): ")
+                if color_option.lower() == 'y':
+                    color = input("Enter color for scatter plot (optional, default is blue): ")
+                    break
+                elif color_option.lower() == 'n':
+                    color = 'blue'
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                trendline_option = input("Do you want to include a trend line? (y/n): ")
+                if trendline_option.lower() == 'y':
+                    trendline = True
+                    break
+                elif trendline_option.lower() == 'n':
+                    trendline = False
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                title_option = input("Do you want to specify a title for the graph? (y/n): ")
+                if title_option.lower() == 'y':
+                    graph_title = input("Enter graph title: ")
+                    break
+                elif title_option.lower() == 'n':
+                    graph_title = "Scatter Plot"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                x_label_option = input("Do you want to specify an x-axis label? (y/n): ")
+                if x_label_option.lower() == 'y':
+                    x_label = input("Enter x-axis label: ")
+                    break
+                elif x_label_option.lower() == 'n':
+                    x_label = "X-axis"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                y_label_option = input("Do you want to specify a y-axis label? (y/n): ")
+                if y_label_option.lower() == 'y':
+                    y_label = input("Enter y-axis label: ")
+                    break
+                elif y_label_option.lower() == 'n':
+                    y_label = "Y-axis"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            create_scatter_plot(x_values, y_values, x_label, y_label, graph_title, color, trendline)
+
+        elif choice == '3':
+            values = list(map(float, input("Enter values (comma-separated): ").split(',')))
+
+            while True:
+                custom_labels_option = input("Do you want to enter custom labels? (y/n): ")
+                if custom_labels_option.lower() == 'y':
+                    custom_labels = input("Enter custom labels (comma-separated values): ").split(',')
+                    break
+                elif custom_labels_option.lower() == 'n':
+                    custom_labels = None
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                title_option = input("Do you want to specify a title for the graph? (y/n): ")
+                if title_option.lower() == 'y':
+                    graph_title = input("Enter graph title: ")
+                    break
+                elif title_option.lower() == 'n':
+                    graph_title = "Pie Chart"
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            while True:
+                color_option = input("Do you want to specify colors for the pie chart? (y/n): ")
+                if color_option.lower() == 'y':
+                    colors = input("Enter colors (comma-separated values): ").split(',')
+                    break
+                elif color_option.lower() == 'n':
+                    colors = None
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+            create_pie_chart(values, custom_labels, graph_title, colors)
+
+        else:
+            print("Invalid choice. Please try again.\n")
+            continue  # Continue to the next iteration of the loop
+
+        while True:
+            repeat_option = input("Do you want to create another graph? (y/n): ")
+            if repeat_option.lower() == 'y':
+                break
+            elif repeat_option.lower() == 'n':
+                print("Thanks for choosing Graphify. Where numbers become art!")
+                return
+            else:
+                print("Invalid input. Please enter 'y' for yes or 'n' for no.")
+
+if __name__ == '__main__':
+    main()
