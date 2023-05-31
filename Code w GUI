@@ -1,1 +1,289 @@
+# Graphify
+import tkinter as tk
+from tkinter import messagebox
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def create_bar_graph():
+    labels = bar_labels.get().split(',')
+    values = bar_values.get().split(',')
+    color = bar_color.get() if bar_color.get() else 'blue'
+    x_label = bar_xlabel.get() if bar_xlabel.get() else 'X-axis'
+    y_label = bar_ylabel.get() if bar_ylabel.get() else 'Y-axis'
+    graph_title = bar_title.get() if bar_title.get() else 'Bar Graph'
+
+    try:
+        values = list(map(float, values))
+        if len(labels) != len(values):
+            raise ValueError("Number of labels and values should be the same.")
+
+        fig, ax = plt.subplots()
+        ax.bar(labels, values, color=color)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(graph_title)
+        plt.show()
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+        bar_labels.config(bg='red')
+        bar_values.config(bg='red')
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+
+def create_scatter_plot():
+    x_values = scatter_x_values.get().split(',')
+    y_values = scatter_y_values.get().split(',')
+    color = scatter_color.get() if scatter_color.get() else 'blue'
+    trendline = scatter_trendline.get() == '1'
+    x_label = scatter_xlabel.get() if scatter_xlabel.get() else 'X-axis'
+    y_label = scatter_ylabel.get() if scatter_ylabel.get() else 'Y-axis'
+    graph_title = scatter_title.get() if scatter_title.get() else 'Scatter Plot'
+
+    try:
+        x_values = list(map(float, x_values))
+        y_values = list(map(float, y_values))
+        if len(x_values) != len(y_values):
+            raise ValueError(
+                "Number of x values and y values should be the same.")
+
+        fig, ax = plt.subplots()
+        ax.scatter(x_values, y_values, color=color)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(graph_title)
+        if trendline:
+            z = np.polyfit(x_values, y_values, 1)
+            p = np.poly1d(z)
+            ax.plot(x_values, p(x_values), color='red', linestyle='--')
+        plt.show()
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+        scatter_x_values.config(bg='red')
+        scatter_y_values.config(bg='red')
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+
+def create_pie_chart():
+    values = pie_values.get().split(',')
+    custom_labels = pie_labels.get().split(',') if pie_labels.get() else [
+        f"Slice {i+1}" for i in range(len(values))]
+    colors = pie_colors.get().split(
+        ',') if pie_colors.get() else plt.cm.Set3.colors[:len(values)]
+    graph_title = pie_title.get() if pie_title.get() else 'Pie Chart'
+
+    try:
+        values = list(map(float, values))
+        if len(values) != len(custom_labels):
+            raise ValueError("Number of values and labels should be the same.")
+
+        fig, ax = plt.subplots()
+        ax.pie(values, labels=custom_labels, colors=colors, autopct='%1.1f%%')
+        ax.set_title(graph_title)
+        plt.show()
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+        pie_values.config(bg='red')
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+
+root = tk.Tk()
+root.title("Graphify GUI")
+
+# Create Bar Graph Section
+bar_frame = tk.LabelFrame(root, text="Bar Graph", padx=10, pady=10)
+bar_frame.pack(fill='both', expand=True, padx=5, pady=5)
+
+bar_canvas = tk.Canvas(bar_frame)
+bar_scrollbar = tk.Scrollbar(
+    bar_frame, orient="vertical", command=bar_canvas.yview)
+bar_scrollable_frame = tk.Frame(bar_canvas)
+
+bar_scrollable_frame.bind("<Configure>",
+                          lambda e: bar_canvas.configure(
+                              scrollregion=bar_canvas.bbox("all"))
+                          )
+
+bar_canvas.create_window((0, 0), window=bar_scrollable_frame, anchor="nw")
+bar_canvas.configure(yscrollcommand=bar_scrollbar.set)
+
+bar_scrollbar.pack(side="right", fill="y")
+bar_canvas.pack(side="left", fill="both", expand=True)
+
+bar_labels_text = tk.Label(
+    bar_scrollable_frame, text="Enter labels (comma-separated)")
+bar_labels_text.pack()
+
+bar_labels = tk.Entry(bar_scrollable_frame)
+bar_labels.pack()
+
+bar_values_text = tk.Label(
+    bar_scrollable_frame, text="Enter values (comma-separated)")
+bar_values_text.pack()
+
+bar_values = tk.Entry(bar_scrollable_frame)
+bar_values.pack()
+
+bar_color_text = tk.Label(bar_scrollable_frame,
+                          text="Enter color (default: blue)")
+bar_color_text.pack()
+
+bar_color = tk.Entry(bar_scrollable_frame)
+bar_color.pack()
+
+bar_xlabel_text = tk.Label(
+    bar_scrollable_frame, text="Enter x-label (default: X-axis)")
+bar_xlabel_text.pack()
+
+bar_xlabel = tk.Entry(bar_scrollable_frame)
+bar_xlabel.pack()
+
+bar_ylabel_text = tk.Label(
+    bar_scrollable_frame, text="Enter y-label (default: Y-axis)")
+bar_ylabel_text.pack()
+
+bar_ylabel = tk.Entry(bar_scrollable_frame)
+bar_ylabel.pack()
+
+bar_title_text = tk.Label(bar_scrollable_frame,
+                          text="Enter graph title (default: Bar Graph)")
+bar_title_text.pack()
+
+bar_title = tk.Entry(bar_scrollable_frame)
+bar_title.pack()
+
+bar_button = tk.Button(bar_frame, text="Create Bar Graph",
+                       command=create_bar_graph)
+bar_button.pack(side="right", padx=10, pady=10)
+
+# Create Scatter Plot Section
+scatter_frame = tk.LabelFrame(root, text="Scatter Plot", padx=10, pady=10)
+scatter_frame.pack(fill='both', expand=True, padx=5, pady=5)
+
+scatter_canvas = tk.Canvas(scatter_frame)
+scatter_scrollbar = tk.Scrollbar(
+    scatter_frame, orient="vertical", command=scatter_canvas.yview)
+scatter_scrollable_frame = tk.Frame(scatter_canvas)
+
+scatter_scrollable_frame.bind("<Configure>",
+                              lambda e: scatter_canvas.configure(
+                                  scrollregion=scatter_canvas.bbox("all"))
+                              )
+
+scatter_canvas.create_window(
+    (0, 0), window=scatter_scrollable_frame, anchor="nw")
+scatter_canvas.configure(yscrollcommand=scatter_scrollbar.set)
+
+scatter_scrollbar.pack(side="right", fill="y")
+scatter_canvas.pack(side="left", fill="both", expand=True)
+
+scatter_x_values_text = tk.Label(
+    scatter_scrollable_frame, text="Enter x values (comma-separated)")
+scatter_x_values_text.pack()
+
+scatter_x_values = tk.Entry(scatter_scrollable_frame)
+scatter_x_values.pack()
+
+scatter_y_values_text = tk.Label(
+    scatter_scrollable_frame, text="Enter y values (comma-separated)")
+scatter_y_values_text.pack()
+
+scatter_y_values = tk.Entry(scatter_scrollable_frame)
+scatter_y_values.pack()
+
+scatter_color_text = tk.Label(
+    scatter_scrollable_frame, text="Enter color (default: blue)")
+scatter_color_text.pack()
+
+scatter_color = tk.Entry(scatter_scrollable_frame)
+scatter_color.pack()
+
+scatter_trendline_text = tk.Label(
+    scatter_scrollable_frame, text="Enter trendline (1 for yes, 0 for no)")
+scatter_trendline_text.pack()
+
+scatter_trendline = tk.Entry(scatter_scrollable_frame)
+scatter_trendline.pack()
+
+scatter_xlabel_text = tk.Label(
+    scatter_scrollable_frame, text="Enter x-label (default: X-axis)")
+scatter_xlabel_text.pack()
+
+scatter_xlabel = tk.Entry(scatter_scrollable_frame)
+scatter_xlabel.pack()
+
+scatter_ylabel_text = tk.Label(
+    scatter_scrollable_frame, text="Enter y-label (default: Y-axis)")
+scatter_ylabel_text.pack()
+
+scatter_ylabel = tk.Entry(scatter_scrollable_frame)
+scatter_ylabel.pack()
+
+scatter_title_text = tk.Label(
+    scatter_scrollable_frame, text="Enter graph title (default: Scatter Plot)")
+scatter_title_text.pack()
+
+scatter_title = tk.Entry(scatter_scrollable_frame)
+scatter_title.pack()
+
+scatter_button = tk.Button(
+    scatter_frame, text="Create Scatter Plot", command=create_scatter_plot)
+scatter_button.pack(side="right", padx=10, pady=10)
+
+# Create Pie Chart Section
+pie_frame = tk.LabelFrame(root, text="Pie Chart", padx=10, pady=10)
+pie_frame.pack(fill='both', expand=True, padx=5, pady=5)
+
+pie_canvas = tk.Canvas(pie_frame)
+pie_scrollbar = tk.Scrollbar(
+    pie_frame, orient="vertical", command=pie_canvas.yview)
+pie_scrollable_frame = tk.Frame(pie_canvas)
+
+pie_scrollable_frame.bind("<Configure>",
+                          lambda e: pie_canvas.configure(
+                              scrollregion=pie_canvas.bbox("all"))
+                          )
+
+pie_canvas.create_window((0, 0), window=pie_scrollable_frame, anchor="nw")
+pie_canvas.configure(yscrollcommand=pie_scrollbar.set)
+
+pie_scrollbar.pack(side="right", fill="y")
+pie_canvas.pack(side="left", fill="both", expand=True)
+
+pie_values_text = tk.Label(
+    pie_scrollable_frame, text="Enter values (comma-separated)")
+pie_values_text.pack()
+
+pie_values = tk.Entry(pie_scrollable_frame)
+pie_values.pack()
+
+pie_labels_text = tk.Label(
+    pie_scrollable_frame, text="Enter labels (comma-separated, optional)")
+pie_labels_text.pack()
+
+pie_labels = tk.Entry(pie_scrollable_frame)
+pie_labels.pack()
+
+pie_colors_text = tk.Label(
+    pie_scrollable_frame, text="Enter colors (comma-separated, optional)")
+pie_colors_text.pack()
+
+pie_colors = tk.Entry(pie_scrollable_frame)
+pie_colors.pack()
+
+pie_title_text = tk.Label(pie_scrollable_frame,
+                          text="Enter graph title (default: Pie Chart)")
+pie_title_text.pack()
+
+pie_title = tk.Entry(pie_scrollable_frame)
+pie_title.pack()
+
+pie_button = tk.Button(pie_frame, text="Create Pie Chart",
+                       command=create_pie_chart)
+pie_button.pack(side="right", padx=10, pady=10)
+
+root.mainloop()
 
